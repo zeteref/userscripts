@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         wykop cleaner
 // @namespace    https://github.com/zeteref/userscripts
-// @version      0.2
+// @version      0.3
 // @description  try to take over the world!
 // @author       Me
-// @match        https://www.wykop.pl*
+// @include *://*wykop.pl*
 // @grant        none
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
 // ==/UserScript==
@@ -13,8 +13,11 @@
     'use strict';
 
 	$(document).ready(function() {
-        alert('a');
+        $('.screening-displace').remove();
+        $('#animation_container').remove();
+        $('#fb-root').remove();
 	});
 
     // Your code here...
 })();
+
