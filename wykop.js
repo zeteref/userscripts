@@ -16,6 +16,7 @@
         $('.screening-displace').remove();
         $('#animation_container').remove();
         $('#fb-root').remove();
+        $('[href*="adverts"]').remove();
 	});
 
     // Your code here...
