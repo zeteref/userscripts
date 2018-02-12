@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         wykop cleaner
 // @namespace    https://github.com/zeteref/userscripts
-// @version      0.3
+// @version      0.3.1
 // @description  try to take over the world!
 // @author       Me
 // @include *://*wykop.pl*
