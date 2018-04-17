@@ -1,92 +1,82 @@
-// ==UserScript==
-// @name wykop-show-reply
-// @version 0.1.3
-// @namespace Violentmonkey Scripts
-// @include  *://*wykop.pl*
-// @require      https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
-// @require      https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js
-// @grant none
-// ==/UserScript==
+
+(function(ns, $, undefined) {
+    var privateVariable = 'privateValue';
 
 
+    function parse_comment(cmt) {
+        return {
+            data_id: cmt.attr('data-id'),
+            author: cmt.find('.author a.showProfileSummary').first().text(),
+            text: cmt.find('div.text').first(),
+            replies: cmt.find('div.text a.showProfileSummary'),
+            dom: cmt
+        };
+    }
 
-(function() {
-    
-function find_previous_comment(id, author) {
-  
-  tmp = undefined;
-  ret = undefined;
-  $('[data-type="comment"]').each(function(cmt) {
-      
-      if($(this).attr('data-id') == id) {
-        ret = tmp;
-      }
-      if ($(this).find('.author a').first().text() == author) {
-         tmp = $(this);   
-      }
-  });
-  
-  return ret;
-  
-}
+    function find_previous_comment(stop_id, replied_to) {
+          
+        tmp = undefined;
+        ret = undefined;
 
+            stop = false;
+            $('[data-type="comment"]').each(function() {
+                if(!stop) {
+                    var cmt = parse_comment($(this));
+                    
+                    if(cmt.data_id == stop_id) {
+                        ret = tmp;
+                        stop = true;
+                    }
+                    if (cmt.author == replied_to) {
+                        tmp = cmt;
+                    }
+                }
 
-function find_conversation(id, auhor, replier) {
-  tmp = undefined;
-  ret = $('<div></div>');
-  
-  $('[data-type="comment"]').each(function() {
-   if($(this).attr('data-id') == id) {
-        ret = tmp;
-      }  
-  });
-  
-  return ret;
-}
-  
-$(document).ready(function() {
+            });
+          
+        return ret;
+          
+    }
 
-    $('head').append('<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">');
-    $('body').append('<div id="mypopup"></div>');
-    
-    $('[data-type="comment"]').each(function(cmt) {
-      var data_id = $(this).attr('data-id');
-      var author = $(this).find('.author a').first().text();
-      var text = $(this).find('div.text').first();
-      var replies = $(this).find('div.text a.showProfileSummary')
-      if (replies.length > 0) {
-          replies.each(function() {
-              $(this).mouseenter(function() {
-                 
-                
-                var prevcmt = find_previous_comment(data_id, $(this).text());
-                
-                $('#mypopup').empty();
-                $('#mypopup').append(prevcmt.clone());
-                
-                $('#mypopup').dialog({
-                  dialogClass: 'no-close', 
-                  draggable: false, 
-                  minWidth: 500
-                });
-                $('.ui-dialog-titlebar').css({display: 'none'});
-                $( ".ui-dialog" ).position({
-                  my: "left bottom",
-                  at: "right",
-                  of: $(this)
-                });
-                
+    function add_listeners() {
+        $('head').append('<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">');
+        $('body').append('<div id="mypopup"></div>');
+        
+        $('[data-type="comment"]').each(function() {
+          var cmt = parse_comment($(this));
+          if (cmt.replies.length > 0) {
+              cmt.replies.each(function() {
+                  $(this).mouseenter(function() {
+                     
+                    
+                    var prevcmt = find_previous_comment(cmt.data_id, $(this).text());
+                    
+                    $('#mypopup').empty();
+                    $('#mypopup').append(prevcmt.dom.clone());
+                    
+                    $('#mypopup').dialog({
+                      dialogClass: 'no-close', 
+                      draggable: false, 
+                      minWidth: 500
+                    });
+                    $('.ui-dialog-titlebar').css({display: 'none'});
+                    $( ".ui-dialog" ).position({
+                      my: "left bottom",
+                      at: "right",
+                      of: $(this)
+                    });
+                    
+                  });
               });
-          });
-      }
-      $( "#mypopup" ).on( "mouseleave", function( event, ui ) { $('#mypopup').dialog('close'); } );
-      
-      
-      
-    });
+          }
+          $( "#mypopup" ).on( "mouseleave", function( event, ui ) { $('#mypopup').dialog('close'); } );
+          
+        });
+    }
 
-});
-
-})();
+    ns.init = function() {
+        add_listeners();
+    }
 
 
+})(window.utils = window.utils || {}, jQuery, undefined);
