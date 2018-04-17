@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name wykop-show-reply
-// @version 0.1.2
+// @version 0.1.3
 // @namespace Violentmonkey Scripts
 // @include  *://*wykop.pl*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
@@ -33,7 +33,7 @@ function find_previous_comment(id, author) {
 
 function find_conversation(id, auhor, replier) {
   tmp = undefined;
-  ret = $(<'div></div>');
+  ret = $(<'<div></div>');
   
   $('[data-type="comment"]').each(function() {
    if($(this).attr('data-id') == id) {
