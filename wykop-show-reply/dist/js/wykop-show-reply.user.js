@@ -33,7 +33,7 @@ function find_previous_comment(id, author) {
 
 function find_conversation(id, auhor, replier) {
   tmp = undefined;
-  ret = $(<'<div></div>');
+  ret = $('<div></div>');
   
   $('[data-type="comment"]').each(function() {
    if($(this).attr('data-id') == id) {
